@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# related to the data
+docker_volumes/
+
 # C extensions
 *.so
 

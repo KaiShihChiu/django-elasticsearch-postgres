@@ -1,0 +1,77 @@
+
+services:
+  db:
+    image: postgres:16.0
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5400:5400"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -p 5400"]  # 检查数据库是否准备就绪
+      interval: 10s  # 每 10 秒检查一次
+      timeout: 5s  # 每次检查的超时时间
+      retries: 5  # 最多重试 5 次，如果都失败则认为服务不健康
+      start_period: 30s  # 给数据库一定的时间来完全启动
+
+
+  elasticsearch:
+    image: elasticsearch:8.15.0
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9000:9000"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: curl --fail http://localhost:9200/_cat/health || exit 1  # 检查 Elasticsearch 是否健康
+      interval: 10s  # 每 10 秒检查一次
+      timeout: 5s  # 每次检查的超时时间
+      retries: 5  # 最多重试 5 次，如果都失败则认为服务不健康
+      start_period: 15s  # 给 Elasticsearch 一定的时间来完全启动
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy  # 确保数据库服务健康后再启动 web
+      elasticsearch:
+        condition: service_healthy  # 确保 Elasticsearch 服务健康后再启动 web
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@db:5400/postgres
+      - ELASTICSEARCH_URL=http://elasticsearch:9000
+    restart: always  # 如果容器退出或失败，则自动重启
+
+  ngrok:
+    image: ngrok/ngrok:3
+    command: http web:8000
+    ports:
+      - "4040:4040" # ngrok 仪表板的端口
+    environment:
+      - NGROK_AUTHTOKEN=2kdrXuQMDc0mNub3nwfLgrbiJcG_51xLmqnBGyDPcdcaDMEdJ
+      - NGROK_REGION=ap  # ngrok 服务器区域
+    depends_on:
+      - web
+
+volumes:
+  postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: D:/LineBot/django-elasticsearch-postgres/docker_volumes/postgres_data
+      o: bind
+
+  es_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: D:/LineBot/django-elasticsearch-postgres/docker_volumes/es_data
+      o: bind
