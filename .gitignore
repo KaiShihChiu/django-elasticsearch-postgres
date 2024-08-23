@@ -5,6 +5,7 @@ __pycache__/
 
 # related to the data
 docker_volumes/
+media/
 
 # C extensions
 *.so

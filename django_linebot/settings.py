@@ -15,7 +15,6 @@ import os
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -28,15 +27,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # app relative settings
 DEBUG = True
 
-ALLOWED_HOSTS = ['7143-111-185-172-45.ngrok-free.app']
+ALLOWED_HOSTS = ['87bc-111-185-172-45.ngrok-free.app']
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://7143-111-185-172-45.ngrok-free.app',  # 添加你的 ngrok 域名
+    'https://87bc-111-185-172-45.ngrok-free.app',  # 添加你的 ngrok 域名
 ]
 
 CHANNEL_SECRET = '585e2e67e993283fb0ac9514603d0eb8'
 CHANNEL_ACCESS_TOKEN = '94m0L33buDymoj7HPe/U7oXbR0np9GUA2OqedFrR0SBXT2xVpWP30ChIDVjSD2rfzRxWxF9esbDxJmZ/Rng355Z+nrIeXhGwtE1yD4itYJsinR9jJt4Q73Nwgrq7lbdBKUmWp8k14+8W1cjxvM2QoQdB04t89/1O/w1cDnyilFU='
 
+BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'hrapp',
+    'django_elasticsearch_dsl',
 ]
 
 MIDDLEWARE = [
@@ -104,6 +105,14 @@ DATABASES = {
     }
 }
 
+
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': 'http://elastic:asdf123520@elasticsearch:9000',  # 使用基本身份验证
+    },
+}
+
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -138,8 +147,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
+# STATICFILES_DIRS = [
+#     BASE_DIR / "static",  # 确保这个路径是正确的
+# ]
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 

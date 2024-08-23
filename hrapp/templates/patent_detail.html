@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>{{ patent.title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 36px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        img {
+            display: block;
+            max-width: 80%;
+            height: auto;
+            margin: 20px auto;
+            border: 5px solid #ecf0f1;
+            border-radius: 10px;
+        }
+
+        .section {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            color: #2980b9;
+            margin-bottom: 10px;
+        }
+
+        .section-content {
+            font-size: 18px;
+            color: #34495e;
+            margin-bottom: 20px;
+        }
+
+        .keywords {
+            background-color: #e74c3c;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    
+    <h1>{{ patent.title }}</h1>
+    <img src="{{ patent.image.url }}" alt="{{ patent.title }}">
+
+    {% if parsed_sections.預期用途 %}
+    <div class="section">
+        <div class="section-title">預期用途</div>
+        <div class="section-content">{{ parsed_sections.預期用途 }}</div>
+    </div>
+    {% endif %}
+
+    {% if parsed_sections.技術架構 %}
+    <div class="section">
+        <div class="section-title">技術架構</div>
+        <div class="section-content">{{ parsed_sections.技術架構 }}</div>
+    </div>
+    {% endif %}
+
+    {% if parsed_sections.競爭優勢 %}
+    <div class="section">
+        <div class="section-title">競爭優勢</div>
+        <div class="section-content">{{ parsed_sections.競爭優勢 }}</div>
+    </div>
+    {% endif %}
+
+    {% if parsed_sections.應用範圍 %}
+    <div class="section">
+        <div class="section-title">應用範圍</div>
+        <div class="section-content">{{ parsed_sections.應用範圍 }}</div>
+    </div>
+    {% endif %}
+
+    {% if parsed_sections.技術合作夥伴 %}
+    <div class="section">
+        <div class="section-title">技術合作夥伴</div>
+        <div class="section-content">{{ parsed_sections.技術合作夥伴 }}</div>
+    </div>
+    {% endif %}
+
+    {% if parsed_sections.研究成果和獎項 %}
+    <div class="section">
+        <div class="section-title">研究成果和獎項</div>
+        <div class="section-content">{{ parsed_sections.研究成果和獎項 }}</div>
+    </div>
+    {% endif %}
+
+    {% if parsed_sections.關鍵字 %}
+    <div class="section keywords">
+        <div class="section-title">關鍵字</div>
+        <div class="section-content">{{ parsed_sections.關鍵字 }}</div>
+    </div>
+    {% endif %}
+    
+</body>
+</html>

@@ -6,6 +6,7 @@ services:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      POSTGRES_PORT: 5400  # 添加此行来设置 PostgreSQL 使用的端口
     ports:
       - "5400:5400"
     volumes:
@@ -22,16 +23,26 @@ services:
     image: elasticsearch:8.15.0
     environment:
       - discovery.type=single-node
+      - http.port=9000   # 这里设置为9000
+      - ELASTIC_PASSWORD=asdf123520  # 设置 elastic 用户的默认密码
+      - xpack.security.enabled=true     # 启用安全功能
+      # - ES_JAVA_OPTS=-Xms1g -Xmx1g
     ports:
       - "9000:9000"
     volumes:
       - es_data:/usr/share/elasticsearch/data
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '1.0'
     healthcheck:
-      test: curl --fail http://localhost:9200/_cat/health || exit 1  # 检查 Elasticsearch 是否健康
-      interval: 10s  # 每 10 秒检查一次
-      timeout: 5s  # 每次检查的超时时间
-      retries: 5  # 最多重试 5 次，如果都失败则认为服务不健康
-      start_period: 15s  # 给 Elasticsearch 一定的时间来完全启动
+      test: ["CMD-SHELL", "curl -u elastic:asdf123520 --fail http://localhost:9000/_cat/health || exit 1"]  # 健康检查命令
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+
 
   web:
     build: .
@@ -41,10 +52,12 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      db:
-        condition: service_healthy  # 确保数据库服务健康后再启动 web
-      elasticsearch:
-        condition: service_healthy  # 确保 Elasticsearch 服务健康后再启动 web
+      - db
+      - elasticsearch
+      # db:
+      #   condition: service_healthy  # 确保数据库服务健康后再启动 web
+      # elasticsearch:
+      #   condition: service_healthy  # 确保 Elasticsearch 服务健康后再启动 web
     environment:
       - DATABASE_URL=postgres://postgres:postgres@db:5400/postgres
       - ELASTICSEARCH_URL=http://elasticsearch:9000

@@ -1,0 +1,16 @@
+<!-- templates/download_tables.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Download Selected Tables</title>
+</head>
+<body>
+    <h1>Download Selected Tables</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Download</button>
+    </form>
+</body>
+</html>
